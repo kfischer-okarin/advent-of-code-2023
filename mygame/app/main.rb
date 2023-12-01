@@ -9,8 +9,8 @@ def tick(args)
 
   send(:"#{state.scene}_tick", args)
   args.state.scene_tick += 1
-
   return if $gtk.production?
+
   args.outputs.labels << { x: 0, y: 720, text: $gtk.current_framerate.round.to_s }
 end
 
