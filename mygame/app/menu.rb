@@ -20,7 +20,7 @@ def menu_setup(args)
     buttons[day_number] = {
       w: 200, h: 40,
       text: "Day #{day_number}",
-      scene: ("day%02d" % day_number).to_sym
+      scene: ('day%02d' % day_number).to_sym
     }
   end
 
