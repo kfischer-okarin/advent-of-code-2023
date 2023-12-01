@@ -62,14 +62,23 @@ end
 def button_primitives(buttons)
   buttons = [buttons] if buttons.is_a? Hash
   buttons.map { |button|
+    button[:bg_alpha] ||= 0
+    if button[:hovered]
+      button[:bg_alpha] = [button[:bg_alpha] + 15, 255].min
+    else
+      button[:bg_alpha] = [button[:bg_alpha] - 30, 0].max
+    end
+
+    rect = button.slice(:x, :y, :w, :h)
     [
-      button.slice(:x, :y, :w, :h).border!,
+      rect.to_solid(r: 150, g: 230, b: 150, a: button[:bg_alpha]),
       {
         x: button[:x] + button[:w].half,
         y: button[:y] + button[:h].half,
         text: button[:text],
         alignment_enum: 1, vertical_alignment_enum: 1
-      }
+      },
+      rect.to_border
     ]
   }
 end
@@ -90,18 +99,13 @@ end
 
 def handle_button_mouse_input(args)
   mouse = args.inputs.mouse
+  mouse_over_button = false
   args.state.ui.buttons.each_value do |button|
-    button[:hovered_ticks] ||= 0
-    button[:pressed_ticks] ||= 0
-    button[:ticks_since_released] ||= 0
     button[:hovered] = mouse.inside_rect? button
-    button[:hovered_ticks] = button[:hovered] ? button[:hovered_ticks] + 1 : 0
-    button[:click] = button[:hovered] && mouse.click
-    button[:pressed] = button[:hovered] && mouse.button_left
-    button[:released] = button[:pressed_ticks].positive? && !mouse.button_left
-    button[:pressed_ticks] = button[:pressed] ? button[:pressed_ticks] + 1 : 0
-    button[:ticks_since_released] = button[:released] ? 0 : button[:ticks_since_released] + 1
+    mouse_over_button = true if button[:hovered]
+    button[:clicked] = button[:hovered] && !mouse.click.nil?
   end
+  $gtk.set_system_cursor(mouse_over_button ? 'hand' : 'arrow')
 end
 
 $gtk.reset
