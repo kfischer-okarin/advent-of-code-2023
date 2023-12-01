@@ -13,13 +13,14 @@ def tick(args)
   state.scene_tick += 1
 
   go_to_scene(args, :menu) if state.scene != :menu && args.inputs.keyboard.key_down.escape
+  start_scene(args, state.next_scene) if state.next_scene
   return if $gtk.production?
 
   args.outputs.labels << { x: 0, y: 720, text: $gtk.current_framerate.round.to_s }
 end
 
 def setup(args)
-  go_to_scene(args, :menu)
+  start_scene(args, :menu)
 end
 
 def headline(text)
@@ -94,9 +95,14 @@ def update_cursor(args)
 end
 
 def go_to_scene(args, scene)
+  args.state.next_scene = scene
+end
+
+def start_scene(args, scene)
   state = args.state
   state.scene_tick = 0
   state.scene = scene
+  state.next_scene = nil
   state.ui.buttons = {}
 end
 
