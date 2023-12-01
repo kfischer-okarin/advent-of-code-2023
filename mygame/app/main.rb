@@ -1,3 +1,5 @@
+require_relative 'day01.rb'
+
 ALL_DAY_NUMBERS = (1..1).to_a.freeze
 
 def tick(args)
@@ -9,24 +11,28 @@ def tick(args)
 
   send(:"#{state.scene}_tick", args)
   args.state.scene_tick += 1
+
+  go_to_scene(args, :menu) if state.scene != :menu && args.inputs.keyboard.key_down.escape
   return if $gtk.production?
 
   args.outputs.labels << { x: 0, y: 720, text: $gtk.current_framerate.round.to_s }
 end
 
 def setup(args)
-  state = args.state
-  state.scene_tick = 0
-  state.scene = :menu
-  state.ui.buttons = {}
+  go_to_scene(args, :menu)
 end
 
 def menu_tick(args)
   menu_setup(args) if args.state.scene_tick.zero?
 
+  buttons = menu_day_buttons(args)
+
+  clicked_button = buttons.find { |button| button[:clicked] }
+  go_to_scene(args, clicked_button[:scene]) if clicked_button
+
   args.outputs.primitives << [
     headline('Advent Of Code 2023'),
-    button_primitives(menu_day_buttons(args))
+    button_primitives(buttons)
   ]
 end
 
@@ -36,7 +42,7 @@ def menu_setup(args)
     buttons[day_number] = {
       w: 200, h: 40,
       text: "Day #{day_number}",
-      day: day_number
+      scene: ("day%02d" % day_number).to_sym
     }
   end
 
@@ -106,6 +112,13 @@ def handle_button_mouse_input(args)
     button[:clicked] = button[:hovered] && !mouse.click.nil?
   end
   $gtk.set_system_cursor(mouse_over_button ? 'hand' : 'arrow')
+end
+
+def go_to_scene(args, scene)
+  state = args.state
+  state.scene_tick = 0
+  state.scene = scene
+  state.ui.buttons = {}
 end
 
 $gtk.reset
