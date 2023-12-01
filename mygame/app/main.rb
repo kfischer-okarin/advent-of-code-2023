@@ -7,9 +7,10 @@ def tick(args)
   state = args.state
 
   handle_button_mouse_input(args)
+  update_cursor(args)
 
   send(:"#{state.scene}_tick", args)
-  args.state.scene_tick += 1
+  state.scene_tick += 1
 
   go_to_scene(args, :menu) if state.scene != :menu && args.inputs.keyboard.key_down.escape
   return if $gtk.production?
@@ -70,13 +71,22 @@ end
 
 def handle_button_mouse_input(args)
   mouse = args.inputs.mouse
-  mouse_over_button = false
+  args.state.hovered_button = nil
   args.state.ui.buttons.each_value do |button|
     button[:hovered] = mouse.inside_rect? button
-    mouse_over_button = true if button[:hovered]
     button[:clicked] = button[:hovered] && !mouse.click.nil?
+
+    args.state.hovered_button = button if button[:hovered]
   end
-  $gtk.set_system_cursor(mouse_over_button ? 'hand' : 'arrow')
+end
+
+def update_cursor(args)
+  cursor = if args.state.hovered_button
+             'hand'
+           else
+             'arrow'
+           end
+  $gtk.set_system_cursor(cursor)
 end
 
 def go_to_scene(args, scene)
