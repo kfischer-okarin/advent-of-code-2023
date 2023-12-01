@@ -17,6 +17,9 @@ open-source-licenses.txt
 tmp
 VERSION.txt
 
+# Emacs
+*~
+
 # Others
 .DS_Store
 vendor
