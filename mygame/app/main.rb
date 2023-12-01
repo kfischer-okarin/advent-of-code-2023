@@ -56,17 +56,21 @@ def button_primitives(buttons)
 end
 
 def arrange_in_two_columns(rects)
-  center_x = 320
+  column = { x: 0, w: 640 }
   y = 620
   rects.each do |rect|
-    rect[:h] ||= 30
     rect[:w] ||= 600
-    rect.merge!(
-      x: center_x - rect[:w].half,
-      y: y - rect[:h]
-    )
+    rect[:h] ||= 30
+    center_horizontally(rect, in_rect: column)
+    rect[:y] = y - rect[:h]
+
     y -= (rect[:h] + 10)
   end
+end
+
+def center_horizontally(rect, in_rect:)
+  center_x = in_rect[:x] + in_rect[:w].half
+  rect[:x] = center_x - rect[:w].half
 end
 
 def handle_button_mouse_input(args)
