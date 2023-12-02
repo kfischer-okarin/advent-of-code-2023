@@ -129,7 +129,7 @@ def handle_text_field_input(args)
 
   state.hovered_text_field = nil
   text_fields.each do |text_field|
-    text_field[:text] ||= 'abc'
+    text_field[:text] ||= ''
     text_field[:char_offsets] ||= calc_char_offsets(text_field)
     text_field[:hovered] = mouse.inside_rect? text_field
     text_field[:click] = text_field[:hovered] && mouse.click
