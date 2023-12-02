@@ -14,6 +14,7 @@ def tick(args)
   update_mouse_cursor(args)
 
   send(:"#{state.scene}_tick", args)
+  render_common_ui(args) unless state.scene == :menu
   state.scene_tick += 1
 
   go_to_scene(args, :menu) if state.scene != :menu && args.inputs.keyboard.key_down.escape
@@ -26,6 +27,12 @@ end
 def setup(args)
   args.state.focused_text_field = nil
   start_scene(args, :menu)
+end
+
+def render_common_ui(args)
+  args.outputs.primitives << [
+    part_toggle_button(args)
+  ]
 end
 
 def headline(text)
@@ -239,7 +246,9 @@ def start_scene(args, scene)
   state.scene_tick = 0
   state.scene = scene
   state.next_scene = nil
-  state.ui.buttons = {}
+  state.ui.buttons = {
+    toggle_part: toggle_button(x: 1195, y: 660)
+  }
   state.ui.text_fields = {}
 end
 
@@ -257,8 +266,17 @@ def fat_border(rect, thickness: 2, **values)
   ]
 end
 
+def part_toggle_button(args)
+  button = args.state.ui.buttons[:toggle_part]
+  [
+    toggle_button_primitives(button),
+    { x: button[:x], y: button[:y] - 5, text: '1' },
+    { x: button[:x] + button[:w], y: button[:y] - 5, text: '2', alignment_enum: 2 },
+  ]
+end
+
 def toggle_button(x:, y:)
-  { x: x, y: y, w: 70, h: 40, value: true }
+  { x: x, y: y, w: 70, h: 40, value: false }
 end
 
 def toggle_button_primitives(toggle_buttons)
