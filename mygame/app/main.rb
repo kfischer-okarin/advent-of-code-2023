@@ -10,7 +10,7 @@ def tick(args)
 
   handle_button_mouse_input(args)
   handle_text_field_input(args)
-  update_cursor(args)
+  update_mouse_cursor(args)
 
   send(:"#{state.scene}_tick", args)
   state.scene_tick += 1
@@ -228,7 +228,7 @@ def keyboard_key_input(args, key, repeat_delay: 30, repeat_rate: 5)
   (press_duration - repeat_delay).mod_zero? repeat_rate
 end
 
-def update_cursor(args)
+def update_mouse_cursor(args)
   cursor = if args.state.hovered_button
              'hand'
            elsif args.state.hovered_text_field
