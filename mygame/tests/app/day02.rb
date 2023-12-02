@@ -29,3 +29,12 @@ def test_day02_possible_set?(_args, assert)
   assert.true! Day02.possible_set?({ blue: 14 })
   assert.false! Day02.possible_set?({ blue: 15 })
 end
+
+def test_day02_minimum_possible_bag_content(_args, assert)
+  sets = [{ blue: 3, red: 4 }, { red: 1, green: 2, blue: 6 }, { green: 2 }]
+  assert.equal! Day02.minimum_possible_bag_content(sets), { red: 4, green: 2, blue: 6 }
+end
+
+def test_day02_power(_args, assert)
+  assert.equal! Day02.power({ red: 4, green: 2, blue: 6 }), 48
+end

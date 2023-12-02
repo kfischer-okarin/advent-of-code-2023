@@ -1,9 +1,10 @@
 def day02_tick(args)
   day02_setup(args) if args.state.scene_tick.zero?
 
+  part = args.state.part
   state = args.state.day02
   ui = args.state.ui
-  state.total_result = Day02.send(:result, 1) if ui.buttons[:calculate][:clicked]
+  state.total_result = Day02.send(:result, part) if ui.buttons[:calculate][:clicked]
   state.total_result_label[:text] = "Total Result: #{state.total_result || '???'}"
 
   args.outputs.primitives << [
@@ -33,8 +34,16 @@ module Day02
     def result(part)
       lines = $gtk.read_file('inputs/day2.txt').split("\n")
       parsed_games = lines.map { |line| parse_game_record(line) }
-      possible_games = parsed_games.select { |game| game[:sets].all? { |set| possible_set?(set) } }
-      possible_games.sum { |game| game[:id] }
+      case part
+      when 1
+        possible_games = parsed_games.select { |game| game[:sets].all? { |set| possible_set?(set) } }
+        possible_games.sum { |game| game[:id] }
+      when 2
+        minimum_possible_bags_contents = parsed_games.map { |game| minimum_possible_bag_content(game[:sets]) }
+        minimum_possible_bags_contents.sum { |bag_content|
+          power(bag_content)
+        }
+      end
     end
 
     def parse_game_record(game_record)
@@ -47,10 +56,10 @@ module Day02
         cube_strings = set_string.split(',').map(&:strip)
         set = {}
         cube_strings.each do |cube_string|
-          number, color = cube_string.split(' ')
+          number_of_cubes, color = cube_string.split(' ')
           next unless %w(blue red green).include? color
 
-          set[color.to_sym] = number.to_i
+          set[color.to_sym] = number_of_cubes.to_i
         end
         set
       }
@@ -61,6 +70,20 @@ module Day02
 
     def possible_set?(set)
       set.fetch(:red, 0) <= 12 && set.fetch(:green, 0) <= 13 && set.fetch(:blue, 0) <= 14
+    end
+
+    def minimum_possible_bag_content(sets)
+      result = {}
+      sets.each do |set|
+        set.each do |color, number_of_cubes|
+          result[color] = [result.fetch(color, 0), number_of_cubes].max
+        end
+      end
+      result
+    end
+
+    def power(set)
+      set[:red] * set[:green] * set[:blue]
     end
   end
 end
