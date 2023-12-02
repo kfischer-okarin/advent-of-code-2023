@@ -79,7 +79,7 @@ def text_field_primitives(text_fields)
 
     if text_field[:focused]
       char_offset = text_field[:char_offsets][text_field[:cursor_index]]
-      if text_field[:focused_ticks] % 60 < 40
+      if text_field[:ticks_since_last_input] % 60 < 30
         result << {
           x: text_field[:x] + char_offset,
           y: text_field[:y] + text_field[:padding_y] + 2, w: 1, h: 20,
@@ -137,6 +137,8 @@ def handle_text_field_input(args)
 
     text_field[:focused_ticks] ||= 0
     text_field[:focused_ticks] = text_field[:focused] ? text_field[:focused_ticks] + 1 : 0
+    text_field[:ticks_since_last_input] ||= 0
+    text_field[:ticks_since_last_input] = -1 if text_field[:click]
 
     state.hovered_text_field = text_field if text_field[:hovered]
   end
@@ -144,6 +146,10 @@ def handle_text_field_input(args)
   if mouse.click
     release_text_field_focus(args) if state.focused_text_field && state.hovered_text_field != state.focused_text_field
     focus_text_field(args, state.hovered_text_field) if state.hovered_text_field && !state.focused_text_field
+  end
+
+  text_fields.each do |text_field|
+    text_field[:ticks_since_last_input] += 1
   end
 end
 
