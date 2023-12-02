@@ -47,6 +47,8 @@ def button_primitives(buttons)
       button[:bg_alpha] = [button[:bg_alpha] - 30, 0].max
     end
 
+    button[:h] ||= 30
+
     rect = button.slice(:x, :y, :w, :h)
     [
       rect.to_sprite(path: :pixel, r: 150, g: 230, b: 150, a: button[:bg_alpha]),
