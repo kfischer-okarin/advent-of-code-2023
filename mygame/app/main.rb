@@ -148,6 +148,8 @@ def handle_text_field_input(args)
     focus_text_field(args, state.hovered_text_field) if state.hovered_text_field && !state.focused_text_field
   end
 
+  handle_text_field_keyboard_input(args, state.focused_text_field) if state.focused_text_field
+
   text_fields.each do |text_field|
     text_field[:ticks_since_last_input] += 1
   end
@@ -178,16 +180,52 @@ def calc_cursor_index(text_field)
 end
 
 def focus_text_field(args, text_field)
-  puts "focus #{text_field}"
   args.state.focused_text_field = text_field
   text_field[:focused] = true
 end
 
 def release_text_field_focus(args)
   state = args.state
-  puts "release focus #{state.focused_text_field}"
   state.focused_text_field[:focused] = false
   state.focused_text_field = nil
+end
+
+def handle_text_field_keyboard_input(args, text_field)
+  input_chars = args.inputs.text
+
+  if keyboard_key_input(args, :left)
+    text_field[:cursor_index] = [text_field[:cursor_index] - 1, 0].max
+    text_field[:ticks_since_last_input] = -1
+  elsif keyboard_key_input(args, :right)
+    text_field[:cursor_index] = [text_field[:cursor_index] + 1, text_field[:text].length].min
+    text_field[:ticks_since_last_input] = -1
+  elsif input_chars.any?
+    input_chars.each do |char|
+      text_field[:text].insert(text_field[:cursor_index], char)
+      text_field[:cursor_index] += 1
+    end
+    text_field[:char_offsets] = calc_char_offsets(text_field)
+    text_field[:ticks_since_last_input] = -1
+  elsif keyboard_key_input(args, :backspace) && text_field[:cursor_index].positive?
+    text_field[:text][text_field[:cursor_index] - 1] = ''
+    text_field[:cursor_index] -= 1
+    text_field[:char_offsets] = calc_char_offsets(text_field)
+    text_field[:ticks_since_last_input] = -1
+  end
+end
+
+def keyboard_key_input(args, key, repeat_delay: 30, repeat_rate: 5)
+  keyboard = args.inputs.keyboard
+  return true if keyboard.key_down.send(key)
+
+  held_since_tick = keyboard.key_held.send(key)
+  return false unless held_since_tick
+
+  press_duration = args.tick_count - held_since_tick
+  return false if press_duration < repeat_delay
+  return true if press_duration == repeat_delay
+
+  (press_duration - repeat_delay).mod_zero? repeat_rate
 end
 
 def update_cursor(args)
