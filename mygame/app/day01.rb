@@ -4,9 +4,9 @@ def day01_tick(args)
   state = args.state.day01
   ui = args.state.ui
   line_input = ui.text_fields[:line_input]
-  state.result = Day01.calc_calibration_value(line_input[:text]) if line_input[:text_changed]
+  state.result = Day01.send(:calc_calibration_value, line_input[:text], part: state.part) if line_input[:text_changed]
   state.result_label[:text] = "Result: #{state.result || '???'}"
-  state.total_result = Day01.calculate_day01_result if ui.buttons[:calculate][:clicked]
+  state.total_result = Day01.send(:result, state.part) if ui.buttons[:calculate][:clicked]
   state.total_result_label[:text] = "Total Result: #{state.total_result || '???'}"
 
   args.outputs.primitives << [
@@ -24,6 +24,7 @@ def day01_setup(args)
   line_input = ui.text_fields[:line_input] = { y: 500, w: 500 }
   center_horizontally(line_input, in_rect: SCREEN)
 
+  state.day01.part = 1
   state.day01.result = nil
   state.day01.total_result = nil
   state.day01.result_label = { y: 480, size_enum: 5 }
@@ -45,20 +46,59 @@ end
 
 module Day01
   class << self
-    def calculate_day01_result
+    def result(part)
       lines = $gtk.read_file('inputs/day1.txt').split
-      lines.sum { |line| calc_calibration_value(line) }
+      lines.sum { |line| calc_calibration_value(line, part: part) }
     end
 
-    DIGITS = ('0'..'9').to_a.freeze
+    DIGITS_PART1 = ('0'..'9').map { |digit|
+      { text: digit, digit: digit.to_i }
+    }.freeze
 
-    def calc_calibration_value(line)
-      line_chars = line.chars
-      first_digit = line_chars.find { |char| DIGITS.include?(char) }
-      second_digit = line_chars.reverse.find { |char| DIGITS.include?(char) }
+    def calc_calibration_value(line, part:)
+      first_digit = first_digit_from_left(line, part: part)
+      second_digit = first_digit_from_right(line, part: part)
       return unless first_digit && second_digit
 
-      (first_digit.to_i * 10) + second_digit.to_i
+      (first_digit * 10) + second_digit
+    end
+
+    private
+
+    def first_digit_from_left(line, part:)
+      result = nil
+      result_index = nil
+
+      digits_for_part(part).each do |digit|
+        index = line.index(digit[:text])
+        next unless index
+        next if result_index && result_index < index
+
+        result = digit
+        result_index = index
+      end
+
+      result&.digit
+    end
+
+    def first_digit_from_right(line, part:)
+      result = nil
+      result_index = nil
+
+      digits_for_part(part).each do |digit|
+        index = line.rindex(digit[:text])
+        next unless index
+        next if result_index && result_index > index
+
+        result = digit
+        result_index = index
+      end
+
+      result&.digit
+    end
+
+    def digits_for_part(part)
+      DIGITS_PART1
     end
   end
 end
