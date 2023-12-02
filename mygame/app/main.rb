@@ -139,6 +139,7 @@ def handle_text_field_input(args)
     text_field[:focused_ticks] = text_field[:focused] ? text_field[:focused_ticks] + 1 : 0
     text_field[:ticks_since_last_input] ||= 0
     text_field[:ticks_since_last_input] = -1 if text_field[:click]
+    text_field[:text_changed] = false
 
     state.hovered_text_field = text_field if text_field[:hovered]
   end
@@ -204,14 +205,19 @@ def handle_text_field_keyboard_input(args, text_field)
       text_field[:text].insert(text_field[:cursor_index], char)
       text_field[:cursor_index] += 1
     end
-    text_field[:char_offsets] = calc_char_offsets(text_field)
+    handle_text_change(text_field)
     text_field[:ticks_since_last_input] = -1
   elsif keyboard_key_input(args, :backspace) && text_field[:cursor_index].positive?
     text_field[:text][text_field[:cursor_index] - 1] = ''
     text_field[:cursor_index] -= 1
-    text_field[:char_offsets] = calc_char_offsets(text_field)
+    handle_text_change(text_field)
     text_field[:ticks_since_last_input] = -1
   end
+end
+
+def handle_text_change(text_field)
+  text_field[:text_changed] = true
+  text_field[:char_offsets] = calc_char_offsets(text_field)
 end
 
 def keyboard_key_input(args, key, repeat_delay: 30, repeat_rate: 5)
