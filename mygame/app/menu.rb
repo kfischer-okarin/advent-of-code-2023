@@ -1,4 +1,4 @@
-ALL_DAY_NUMBERS = (1..1).to_a.freeze
+ALL_DAY_NUMBERS = (1..2).to_a.freeze
 
 def menu_tick(args)
   menu_setup(args) if args.state.scene_tick.zero?

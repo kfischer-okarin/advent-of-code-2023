@@ -1,6 +1,7 @@
 require_relative 'layout.rb'
 require_relative 'menu.rb'
 require_relative 'day01.rb'
+require_relative 'day02.rb'
 
 SCREEN = { x: 0, y: 0, w: 1280, h: 720 }.freeze
 
