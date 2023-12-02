@@ -13,6 +13,7 @@ def tick(args)
   handle_text_field_input(args)
   update_mouse_cursor(args)
 
+  handle_common_ui_input(args) unless state.scene == :menu
   send(:"#{state.scene}_tick", args)
   render_common_ui(args) unless state.scene == :menu
   state.scene_tick += 1
@@ -29,9 +30,17 @@ def setup(args)
   start_scene(args, :menu)
 end
 
+def handle_common_ui_input(args)
+  toggle_part_button = args.state.ui.buttons[:toggle_part]
+  if toggle_part_button[:clicked]
+    toggle_part_button[:value] = !toggle_part_button[:value]
+    args.state.part = toggle_part_button[:value] ? 2 : 1
+  end
+end
+
 def render_common_ui(args)
   args.outputs.primitives << [
-    part_toggle_button(args)
+    toggle_part_button_primitives(args)
   ]
 end
 
@@ -266,7 +275,7 @@ def fat_border(rect, thickness: 2, **values)
   ]
 end
 
-def part_toggle_button(args)
+def toggle_part_button_primitives(args)
   button = args.state.ui.buttons[:toggle_part]
   [
     toggle_button_primitives(button),
