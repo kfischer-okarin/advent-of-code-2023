@@ -257,4 +257,21 @@ def fat_border(rect, thickness: 2, **values)
   ]
 end
 
+def toggle_button(x:, y:)
+  { x: x, y: y, w: 70, h: 40, value: true }
+end
+
+def toggle_button_primitives(toggle_buttons)
+  toggle_buttons = [toggle_buttons] if toggle_buttons.is_a? Hash
+
+  toggle_buttons.map { |toggle_button|
+    rect = toggle_button.slice(:x, :y, :w, :h)
+    switch_x = toggle_button[:value] ? (rect[:x] + 33) : (rect[:x] + 3)
+    [
+      rect.to_border,
+      { x: switch_x, y: rect[:y] + 3, w: 34, h: 34, r: 0, g: 0, b: 200 }.to_solid
+    ]
+  }
+end
+
 $gtk.reset
