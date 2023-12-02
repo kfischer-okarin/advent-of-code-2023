@@ -14,3 +14,23 @@ def test_day01_calc_calibration_value_part1(_args, assert)
                   "but was #{result}"
   end
 end
+
+def test_day01_calc_calibration_value_part2(_args, assert)
+  [
+    { line: 'invalid', expected: nil },
+    { line: 'two1nine', expected: 29 },
+    { line: 'eightwothree', expected: 83 },
+    { line: 'abcone2threexyz', expected: 13 },
+    { line: 'xtwone3four', expected: 24 },
+    { line: '4nineeightseven2', expected: 42 },
+    { line: 'zoneight234', expected: 14 },
+    { line: '7pqrstsixteen', expected: 76 }
+  ].each do |test_case|
+    result = Day01.calc_calibration_value(test_case[:line], part: 2)
+
+    assert.equal! result,
+                  test_case[:expected],
+                  "Expected calibration value for #{test_case[:line].inspect} to be #{test_case[:expected]} " \
+                  "but was #{result}"
+  end
+end

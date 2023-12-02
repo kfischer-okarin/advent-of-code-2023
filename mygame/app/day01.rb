@@ -1,12 +1,15 @@
 def day01_tick(args)
   day01_setup(args) if args.state.scene_tick.zero?
 
+  part = args.state.part
   state = args.state.day01
   ui = args.state.ui
   line_input = ui.text_fields[:line_input]
-  state.result = Day01.send(:calc_calibration_value, line_input[:text], part: state.part) if line_input[:text_changed]
+  if line_input[:text_changed] || args.state.part_changed
+    state.result = Day01.send(:calc_calibration_value, line_input[:text], part: part)
+  end
   state.result_label[:text] = "Result: #{state.result || '???'}"
-  state.total_result = Day01.send(:result, state.part) if ui.buttons[:calculate][:clicked]
+  state.total_result = Day01.send(:result, part) if ui.buttons[:calculate][:clicked]
   state.total_result_label[:text] = "Total Result: #{state.total_result || '???'}"
 
   args.outputs.primitives << [
@@ -20,15 +23,14 @@ end
 
 def day01_setup(args)
   state = args.state
-  ui = state.ui
-  line_input = ui.text_fields[:line_input] = { y: 500, w: 500 }
-  center_horizontally(line_input, in_rect: SCREEN)
-
-  state.day01.part = 1
   state.day01.result = nil
   state.day01.total_result = nil
   state.day01.result_label = { y: 480, size_enum: 5 }
   state.day01.total_result_label = { y: 270, size_enum: 5 }
+
+  ui = state.ui
+  line_input = ui.text_fields[:line_input] = { y: 500, w: 500 }
+  center_horizontally(line_input, in_rect: SCREEN)
   ui.buttons[:calculate] = { y: 300, w: 200, text: 'Calculate' }
   align_left(
     [
@@ -54,6 +56,12 @@ module Day01
     DIGITS_PART1 = ('0'..'9').map { |digit|
       { text: digit, digit: digit.to_i }
     }.freeze
+
+    DIGIT_WORDS = %w(zero one two three four five six seven eight nine).freeze
+
+    DIGITS_PART2 = DIGITS_PART1 + DIGIT_WORDS.map_with_index { |word, index|
+      { text: word, digit: index }
+    }
 
     def calc_calibration_value(line, part:)
       first_digit = first_digit_from_left(line, part: part)
@@ -98,7 +106,12 @@ module Day01
     end
 
     def digits_for_part(part)
-      DIGITS_PART1
+      case part
+      when 1
+        DIGITS_PART1
+      when 2
+        DIGITS_PART2
+      end
     end
   end
 end

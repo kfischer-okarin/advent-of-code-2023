@@ -32,9 +32,11 @@ end
 
 def handle_common_ui_input(args)
   toggle_part_button = args.state.ui.buttons[:toggle_part]
+  args.state.part_changed = false
   if toggle_part_button[:clicked]
     toggle_part_button[:value] = !toggle_part_button[:value]
     args.state.part = toggle_part_button[:value] ? 2 : 1
+    args.state.part_changed = true
   end
 end
 
