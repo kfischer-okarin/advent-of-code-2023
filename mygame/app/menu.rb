@@ -17,6 +17,9 @@ class Menu
     arrange_in_two_columns(@buttons)
   end
 
+  def prepare_ui(args)
+  end
+
   def tick(args)
     clicked_button = @buttons.find { |button| button[:clicked] }
     go_to_scene(args, clicked_button[:scene]) if clicked_button

@@ -18,7 +18,6 @@ def tick(args)
   handle_text_field_input(args)
   update_mouse_cursor(args)
 
-  handle_common_ui_input(args) unless state.scene.is_a? Menu
   state.scene.tick(args)
 
   go_to_scene(args, Menu) if !state.scene.is_a?(Menu) && args.inputs.keyboard.key_down.escape
@@ -42,25 +41,6 @@ end
 
 def read_inputs(day_number)
   $gtk.read_file('inputs/day%02d.txt' % day_number)
-end
-
-def handle_common_ui_input(args)
-  toggle_part_button = args.state.ui.buttons[:toggle_part]
-  args.state.part_changed = false
-  if toggle_part_button[:clicked]
-    toggle_part_button[:value] = !toggle_part_button[:value]
-    args.state.part = toggle_part_button[:value] ? 2 : 1
-    args.state.part_changed = true
-  end
-end
-
-def toggle_part_button_primitives(args)
-  button = args.state.ui.buttons[:toggle_part]
-  [
-    toggle_button_primitives(button),
-    { x: button[:x], y: button[:y] - 5, text: '1' },
-    { x: button[:x] + button[:w], y: button[:y] - 5, text: '2', alignment_enum: 2 },
-  ]
 end
 
 def headline(text)
@@ -90,8 +70,8 @@ end
 def start_scene(args, scene_class)
   reset_ui(args)
   state = args.state
-  state.ui.buttons[:toggle_part] = toggle_button(x: 1195, y: 660)
   state.scene = scene_class.new(args)
+  state.scene.prepare_ui(args)
   state.part = 1
   state.next_scene_class = nil
 end
