@@ -35,24 +35,47 @@ module Day03
     end
 
     def part_numbers(schematic)
-      result = []
-      schematic[:numbers].each { |number|
-        result << number[:number] if schematic[:symbols].any? { |symbol| adjacent?(number, symbol) }
-      }
-      result
+      Schematic.new(schematic).part_numbers
     end
 
-    def adjacent?(number, symbol)
-      y_diff = (number[:y] - symbol[:y]).abs
-      return false if y_diff >= 2
+    class Schematic
+      def initialize(schematic)
+        @schematic = schematic
+      end
 
-      number_positions = (0...number[:number].to_s.size).map { |x_offset|
-        { x: number[:x] + x_offset, y: number[:y] }
-      }
-      number_positions.any? { |position|
-        x_diff = (position[:x] - symbol[:x]).abs
-        [x_diff, y_diff].max == 1
-      }
+      def part_numbers
+        result = []
+        numbers_by_y.each do |y, numbers|
+          possible_symbols = [y - 1, y, y + 1].flat_map { |symbol_y|
+            symbols_by_y[symbol_y]
+          }.compact
+
+          numbers.each do |number|
+            next unless number_x_coordinates(number).any? { |x|
+              possible_symbols.any? { |symbol| (x - symbol[:x]).abs <= 1 }
+            }
+
+            result << number[:number]
+          end
+        end
+        result
+      end
+
+      private
+
+      def numbers_by_y
+        @numbers_by_y ||= @schematic[:numbers].group_by { |number| number[:y] }
+      end
+
+      def symbols_by_y
+        @symbols_by_y ||= @schematic[:symbols].group_by { |symbol| symbol[:y] }
+      end
+
+      def number_x_coordinates(number)
+        (0...number[:number].to_s.size).map { |offset|
+          number[:x] + offset
+        }
+      end
     end
   end
 end

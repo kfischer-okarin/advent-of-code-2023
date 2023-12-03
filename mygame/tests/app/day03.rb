@@ -38,11 +38,6 @@ def test_day03_parse_schematic(_args, assert)
   assert.equal! Day03.parse_schematic(schematic_string), expected_result
 end
 
-def test_day03_adjacent?(_args, assert)
-  assert.true! Day03.adjacent?({ number: 664, x: 1, y: 0 }, { symbol: '$', x: 3, y: 1 })
-  assert.false! Day03.adjacent?({ number: 664, x: 1, y: 0 }, { symbol: '*', x: 5, y: 1 })
-end
-
 def test_day03_part_numbers(_args, assert)
   schematic = {
     numbers: [
