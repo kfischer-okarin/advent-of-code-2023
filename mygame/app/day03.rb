@@ -6,7 +6,12 @@ module Day03
       schematic_string = read_inputs(3)
       schematic = parse_schematic(schematic_string)
 
-      part_numbers(schematic).sum
+      case part
+      when 1
+        part_numbers(schematic).sum
+      when 2
+        gears(schematic).map { |part1, part2| part1 * part2 }.sum
+      end
     end
 
     def parse_schematic(schematic_string)
@@ -38,6 +43,10 @@ module Day03
       Schematic.new(schematic).part_numbers
     end
 
+    def gears(schematic)
+      Schematic.new(schematic).gears
+    end
+
     class Schematic
       def initialize(schematic)
         @schematic = schematic
@@ -57,6 +66,23 @@ module Day03
 
             result << number[:number]
           end
+        end
+        result
+      end
+
+      def gears
+        potential_gears = @schematic[:symbols].select { |symbol| symbol[:symbol] == '*' }
+        result = []
+        potential_gears.each do |symbol|
+          y = symbol[:y]
+          possible_numbers = [y - 1, y, y + 1].flat_map { |number_y|
+            numbers_by_y[number_y]
+          }.compact
+
+          adjacent_numbers = possible_numbers.select { |number|
+            number_x_coordinates(number).any? { |x| (x - symbol[:x]).abs <= 1 }
+          }
+          result << adjacent_numbers.map{ |number| number[:number] } if adjacent_numbers.size == 2
         end
         result
       end

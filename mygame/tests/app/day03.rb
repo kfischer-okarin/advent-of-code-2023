@@ -74,3 +74,34 @@ def test_day03_part_numbers(_args, assert)
   ]
   assert.equal! Day03.part_numbers(schematic), expected_result
 end
+
+def test_day03_gears(_args, assert)
+  schematic = {
+    numbers: [
+      { number: 664, x: 1, y: 0 },
+      { number: 598, x: 5, y: 0 },
+      { number: 755, x: 6, y: 2 },
+      { number: 592, x: 2, y: 3 },
+      { number:  58, x: 7, y: 4 },
+      { number: 617, x: 0, y: 5 },
+      { number:  35, x: 2, y: 7 },
+      { number: 633, x: 6, y: 7 },
+      { number: 467, x: 0, y: 9 },
+      { number: 114, x: 5, y: 9 }
+    ],
+    symbols: [
+      { symbol: '$', x: 3, y: 1 },
+      { symbol: '*', x: 5, y: 1 },
+      { symbol: '+', x: 5, y: 4 },
+      { symbol: '*', x: 3, y: 5 },
+      { symbol: '#', x: 6, y: 6 },
+      { symbol: '*', x: 3, y: 8 }
+    ]
+  }
+
+  expected_result = [
+    [598, 755],
+    [35, 467]
+  ]
+  assert.equal! Day03.gears(schematic), expected_result
+end
