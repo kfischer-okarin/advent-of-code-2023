@@ -14,19 +14,23 @@ module Day02
       )
     end
 
-    def tick(args)
+    protected
+
+    def title
+      '--- Day 2: Cube Conundrum ---'
+    end
+
+    def update(args)
       @total_result = Day02.send(:result, part(args)) if @calculate_button[:clicked]
+    end
+
+    def render(args)
       @total_result_label[:text] = "Total Result: #{@total_result || '???'}"
 
       args.outputs.primitives << [
         button_primitives(@calculate_button),
         @total_result_label
       ]
-      render_common_ui(args)
-    end
-
-    def title
-      '--- Day 2: Cube Conundrum ---'
     end
   end
 end

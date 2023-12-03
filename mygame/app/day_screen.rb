@@ -1,5 +1,15 @@
 class DayScreen
+  def tick(args)
+    update(args)
+    render(args)
+    render_common_ui(args)
+  end
+
   protected
+
+  def update(args); end
+
+  def render(args); end
 
   def render_common_ui(args)
     args.outputs.primitives << [

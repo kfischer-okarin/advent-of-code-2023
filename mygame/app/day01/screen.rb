@@ -20,12 +20,21 @@ module Day01
       )
     end
 
-    def tick(args)
+    protected
+
+    def title
+      '--- Day 1: Trebuchet?! ---'
+    end
+
+    def update(args)
       if @line_input[:text_changed] || part_changed?(args)
         @result = Day01.send(:calc_calibration_value, @line_input[:text], part: part(args))
       end
-      @result_label[:text] = "Result: #{@result || '???'}"
       @total_result = Day01.send(:result, part(args)) if @calculate_button[:clicked]
+    end
+
+    def render(args)
+      @result_label[:text] = "Result: #{@result || '???'}"
       @total_result_label[:text] = "Total Result: #{@total_result || '???'}"
 
       args.outputs.primitives << [
@@ -34,11 +43,6 @@ module Day01
         button_primitives(@calculate_button),
         @total_result_label
       ]
-      render_common_ui(args)
-    end
-
-    def title
-      '--- Day 1: Trebuchet?! ---'
     end
   end
 end
