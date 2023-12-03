@@ -1,5 +1,5 @@
 module Day02
-  class Screen
+  class Screen < DayScreen
     def initialize(args)
       @total_result = nil
       @total_result_label = { y: 270, size_enum: 5 }
@@ -19,20 +19,14 @@ module Day02
       @total_result_label[:text] = "Total Result: #{@total_result || '???'}"
 
       args.outputs.primitives << [
-        headline('--- Day 2: Cube Conundrum ---'),
         button_primitives(@calculate_button),
         @total_result_label
       ]
+      render_common_ui(args)
     end
 
-    private
-
-    def part(args)
-      args.state.part
-    end
-
-    def part_changed?(args)
-      args.state.part_changed
+    def title
+      '--- Day 2: Cube Conundrum ---'
     end
   end
 end

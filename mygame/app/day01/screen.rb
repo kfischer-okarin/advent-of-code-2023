@@ -1,5 +1,5 @@
 module Day01
-  class Screen
+  class Screen < DayScreen
     def initialize(args)
       @result = nil
       @total_result = nil
@@ -29,22 +29,16 @@ module Day01
       @total_result_label[:text] = "Total Result: #{@total_result || '???'}"
 
       args.outputs.primitives << [
-        headline('--- Day 1: Trebuchet?! ---'),
         text_field_primitives(@line_input),
         @result_label,
         button_primitives(@calculate_button),
         @total_result_label
       ]
+      render_common_ui(args)
     end
 
-    private
-
-    def part(args)
-      args.state.part
-    end
-
-    def part_changed?(args)
-      args.state.part_changed
+    def title
+      '--- Day 1: Trebuchet?! ---'
     end
   end
 end

@@ -1,6 +1,7 @@
 require_relative 'layout.rb'
 require_relative 'ui.rb'
 require_relative 'menu.rb'
+require_relative 'day_screen.rb'
 require_relative 'day01.rb'
 require_relative 'day01/screen.rb'
 require_relative 'day02.rb'
@@ -19,7 +20,6 @@ def tick(args)
 
   handle_common_ui_input(args) unless state.scene.is_a? Menu
   state.scene.tick(args)
-  render_common_ui(args) unless state.scene.is_a? Menu
 
   go_to_scene(args, Menu) if !state.scene.is_a?(Menu) && args.inputs.keyboard.key_down.escape
   start_scene(args, state.next_scene_class) if state.next_scene_class
@@ -48,12 +48,6 @@ def handle_common_ui_input(args)
     args.state.part = toggle_part_button[:value] ? 2 : 1
     args.state.part_changed = true
   end
-end
-
-def render_common_ui(args)
-  args.outputs.primitives << [
-    toggle_part_button_primitives(args)
-  ]
 end
 
 def toggle_part_button_primitives(args)
