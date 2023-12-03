@@ -1,7 +1,9 @@
 require_relative 'layout.rb'
 require_relative 'menu.rb'
 require_relative 'day01.rb'
+require_relative 'day01/screen.rb'
 require_relative 'day02.rb'
+require_relative 'day02/screen.rb'
 
 SCREEN = { x: 0, y: 0, w: 1280, h: 720 }.freeze
 
@@ -257,6 +259,7 @@ def start_scene(args, scene)
   state = args.state
   state.scene_tick = 0
   state.scene = scene
+  state.part = 1
   state.next_scene = nil
   state.ui.buttons = {
     toggle_part: toggle_button(x: 1195, y: 660)

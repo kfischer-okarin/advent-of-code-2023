@@ -1,32 +1,11 @@
 def day02_tick(args)
   day02_setup(args) if args.state.scene_tick.zero?
 
-  part = args.state.part
-  state = args.state.day02
-  ui = args.state.ui
-  state.total_result = Day02.send(:result, part) if ui.buttons[:calculate][:clicked]
-  state.total_result_label[:text] = "Total Result: #{state.total_result || '???'}"
-
-  args.outputs.primitives << [
-    headline('--- Day 2: Cube Conundrum ---'),
-    button_primitives(ui.buttons[:calculate]),
-    state.total_result_label
-  ]
+  args.state.screen.tick(args)
 end
 
 def day02_setup(args)
-  state = args.state
-  state.day02.total_result = nil
-  state.day02.total_result_label = { y: 270, size_enum: 5 }
-
-  ui = state.ui
-  ui.buttons[:calculate] = { x: 200, y: 300, w: 200, text: 'Calculate' }
-  align_left(
-    [
-      ui.buttons[:calculate],
-      state.day02.total_result_label
-    ]
-  )
+  args.state.screen = Day02::Screen.new(args)
 end
 
 module Day02
