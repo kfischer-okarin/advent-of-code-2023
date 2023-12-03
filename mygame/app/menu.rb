@@ -6,11 +6,11 @@ class Menu
 
     @buttons = []
     ALL_DAY_NUMBERS.each do |day_number|
-      ui.buttons[day_number] = {
+      ui.buttons[day_number] = button(
         w: 200, h: 40,
         text: "Day #{day_number}",
-        scene: ('day%02d' % day_number).to_sym
-      }
+        scene: Object.const_get('Day%02d::Screen' % day_number)
+      )
       @buttons << ui.buttons[day_number]
     end
 
@@ -26,14 +26,4 @@ class Menu
       button_primitives(@buttons)
     ]
   end
-end
-
-def menu_tick(args)
-  menu_setup(args) if args.state.scene_tick.zero?
-
-  args.state.screen.tick(args)
-end
-
-def menu_setup(args)
-  args.state.screen = Menu.new(args)
 end

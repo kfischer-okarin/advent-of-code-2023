@@ -1,3 +1,7 @@
+def button(values)
+  { h: 30, **values }
+end
+
 def handle_button_mouse_input(args)
   mouse = args.inputs.mouse
   args.state.hovered_button = nil
@@ -18,8 +22,6 @@ def button_primitives(buttons)
     else
       button[:bg_alpha] = [button[:bg_alpha] - 30, 0].max
     end
-
-    button[:h] ||= 30
 
     rect = button.slice(:x, :y, :w, :h)
     [
@@ -52,6 +54,18 @@ def toggle_button_primitives(toggle_buttons)
   }
 end
 
+def text_field(values)
+  {
+    h: 30,
+    padding_x: 5,
+    padding_y: 2,
+    text: '',
+    focused_ticks: 0,
+    ticks_since_last_input: 0,
+    **values
+  }
+end
+
 def handle_text_field_input(args)
   mouse = args.inputs.mouse
   state = args.state
@@ -59,15 +73,12 @@ def handle_text_field_input(args)
 
   state.hovered_text_field = nil
   text_fields.each do |text_field|
-    text_field[:text] ||= ''
     text_field[:char_offsets] ||= calc_char_offsets(text_field)
     text_field[:hovered] = mouse.inside_rect? text_field
     text_field[:click] = text_field[:hovered] && mouse.click
     text_field[:cursor_index] = calc_cursor_index(text_field) if text_field[:click]
 
-    text_field[:focused_ticks] ||= 0
     text_field[:focused_ticks] = text_field[:focused] ? text_field[:focused_ticks] + 1 : 0
-    text_field[:ticks_since_last_input] ||= 0
     text_field[:ticks_since_last_input] = -1 if text_field[:click]
     text_field[:text_changed] = false
 
@@ -167,9 +178,6 @@ end
 def text_field_primitives(text_fields)
   text_fields = [text_fields] if text_fields.is_a? Hash
   text_fields.map { |text_field|
-    text_field[:h] ||= 30
-    text_field[:padding_x] ||= 5
-    text_field[:padding_y] ||= 2
     rect = text_field.slice(:x, :y, :w, :h)
     result = [
       rect.to_sprite(path: :pixel, r: 200, g: 200, b: 200),

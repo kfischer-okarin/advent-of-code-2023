@@ -17,21 +17,27 @@ def tick(args)
   handle_text_field_input(args)
   update_mouse_cursor(args)
 
-  handle_common_ui_input(args) unless state.scene == :menu
-  send(:"#{state.scene}_tick", args)
-  render_common_ui(args) unless state.scene == :menu
-  state.scene_tick += 1
+  handle_common_ui_input(args) unless state.scene.is_a? Menu
+  state.scene.tick(args)
+  render_common_ui(args) unless state.scene.is_a? Menu
 
-  go_to_scene(args, :menu) if state.scene != :menu && args.inputs.keyboard.key_down.escape
-  start_scene(args, state.next_scene) if state.next_scene
+  go_to_scene(args, Menu) if !state.scene.is_a?(Menu) && args.inputs.keyboard.key_down.escape
+  start_scene(args, state.next_scene_class) if state.next_scene_class
   return if $gtk.production?
 
   args.outputs.labels << { x: 0, y: 720, text: $gtk.current_framerate.round.to_s }
 end
 
 def setup(args)
+  reset_ui(args)
   args.state.focused_text_field = nil
-  start_scene(args, :menu)
+  start_scene(args, Menu)
+end
+
+def reset_ui(args)
+  state = args.state
+  state.ui.buttons = {}
+  state.ui.text_fields = {}
 end
 
 def handle_common_ui_input(args)
@@ -79,20 +85,17 @@ def update_mouse_cursor(args)
   $gtk.set_system_cursor(cursor)
 end
 
-def go_to_scene(args, scene)
-  args.state.next_scene = scene
+def go_to_scene(args, scene_class)
+  args.state.next_scene_class = scene_class
 end
 
-def start_scene(args, scene)
+def start_scene(args, scene_class)
+  reset_ui(args)
   state = args.state
-  state.scene_tick = 0
-  state.scene = scene
+  state.ui.buttons[:toggle_part] = toggle_button(x: 1195, y: 660)
+  state.scene = scene_class.new(args)
   state.part = 1
-  state.next_scene = nil
-  state.ui.buttons = {
-    toggle_part: toggle_button(x: 1195, y: 660)
-  }
-  state.ui.text_fields = {}
+  state.next_scene_class = nil
 end
 
 def fat_border(rect, thickness: 2, **values)

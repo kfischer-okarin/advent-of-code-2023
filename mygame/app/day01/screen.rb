@@ -7,9 +7,9 @@ module Day01
       @total_result_label = { y: 270, size_enum: 5 }
 
       ui = args.state.ui
-      @line_input = ui.text_fields[:line_input] = { y: 500, w: 500 }
+      @line_input = ui.text_fields[:line_input] = text_field(y: 500, w: 500)
       center_horizontally(@line_input, in_rect: SCREEN)
-      @calculate_button = ui.buttons[:calculate] = { y: 300, w: 200, text: 'Calculate' }
+      @calculate_button = ui.buttons[:calculate] = button(y: 300, w: 200, text: 'Calculate')
       align_left(
         [
           @line_input,

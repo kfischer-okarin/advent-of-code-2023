@@ -1,13 +1,3 @@
-def day02_tick(args)
-  day02_setup(args) if args.state.scene_tick.zero?
-
-  args.state.screen.tick(args)
-end
-
-def day02_setup(args)
-  args.state.screen = Day02::Screen.new(args)
-end
-
 module Day02
   class << self
     def result(part)

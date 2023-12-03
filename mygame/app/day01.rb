@@ -1,17 +1,3 @@
-def day01_tick(args)
-  day01_setup(args) if args.state.scene_tick.zero?
-
-  args.state.screen.tick(args)
-end
-
-def day01_setup(args)
-  args.state.screen = Day01::Screen.new(args)
-end
-
-def day01_result_label(value, x:)
-  { x: x, y: 480, text: value, size_enum: 5 }
-end
-
 module Day01
   class << self
     def result(part)

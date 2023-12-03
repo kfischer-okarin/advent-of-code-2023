@@ -5,7 +5,7 @@ module Day02
       @total_result_label = { y: 270, size_enum: 5 }
 
       ui = args.state.ui
-      @calculate_button = ui.buttons[:calculate] = { x: 200, y: 300, w: 200, text: 'Calculate' }
+      @calculate_button = ui.buttons[:calculate] = button(x: 200, y: 300, w: 200, text: 'Calculate')
       align_left(
         [
           @calculate_button,
