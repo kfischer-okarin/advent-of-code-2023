@@ -16,6 +16,10 @@ class DayScreen
 
   protected
 
+  def title
+    '???'
+  end
+
   def update(args); end
 
   def render(args); end
@@ -38,7 +42,7 @@ class DayScreen
   def render_common_ui(args)
     ui = args.state.ui
     args.outputs.primitives << [
-      headline(title),
+      headline("--- Day #{day_number}: #{title} ---"),
       toggle_part_button_primitives(args),
       button_primitives(ui.buttons[:calc_day_answer]),
       day_answer_label(args)
@@ -67,7 +71,10 @@ class DayScreen
   end
 
   def day_module
-    day_module_name, _ = self.class.name.split('::')
-    Object.const_get(day_module_name)
+    Object.const_get('Day%02d' % day_number)
+  end
+
+  def day_number
+    self.class.name[3..4].to_i
   end
 end

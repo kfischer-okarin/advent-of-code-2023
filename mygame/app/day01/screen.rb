@@ -18,7 +18,7 @@ module Day01
     protected
 
     def title
-      '--- Day 1: Trebuchet?! ---'
+      'Trebuchet?!'
     end
 
     def update(args)

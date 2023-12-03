@@ -3,7 +3,7 @@ module Day02
     protected
 
     def title
-      '--- Day 2: Cube Conundrum ---'
+      'Cube Conundrum'
     end
   end
 end
