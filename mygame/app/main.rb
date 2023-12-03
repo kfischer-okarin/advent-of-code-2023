@@ -6,6 +6,8 @@ require_relative 'day01.rb'
 require_relative 'day01/screen.rb'
 require_relative 'day02.rb'
 require_relative 'day02/screen.rb'
+require_relative 'day03.rb'
+require_relative 'day03/screen.rb'
 
 SCREEN = { x: 0, y: 0, w: 1280, h: 720 }.freeze
 
