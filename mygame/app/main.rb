@@ -40,6 +40,10 @@ def reset_ui(args)
   state.ui.text_fields = {}
 end
 
+def read_inputs(day_number)
+  $gtk.read_file('inputs/day%02d.txt' % day_number)
+end
+
 def handle_common_ui_input(args)
   toggle_part_button = args.state.ui.buttons[:toggle_part]
   args.state.part_changed = false

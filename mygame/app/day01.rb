@@ -1,7 +1,7 @@
 module Day01
   class << self
     def result(part)
-      lines = $gtk.read_file('inputs/day1.txt').split
+      lines = read_inputs(1).split
       lines.sum { |line| calc_calibration_value(line, part: part) }
     end
 

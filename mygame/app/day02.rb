@@ -1,7 +1,7 @@
 module Day02
   class << self
     def result(part)
-      lines = $gtk.read_file('inputs/day2.txt').split("\n")
+      lines = read_inputs(2).split("\n")
       parsed_games = lines.map { |line| parse_game_record(line) }
       case part
       when 1
