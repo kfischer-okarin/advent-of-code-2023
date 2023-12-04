@@ -38,7 +38,7 @@ module Day02
     end
 
     def possible_set?(set)
-      set.fetch(:red, 0) <= 12 && set.fetch(:green, 0) <= 13 && set.fetch(:blue, 0) <= 14
+      could_have_come_out_of_bag?(set, { red: 12, green: 13, blue: 14 })
     end
 
     def minimum_necessary_bag_content(sets)
@@ -53,6 +53,12 @@ module Day02
 
     def power(set)
       set[:red] * set[:green] * set[:blue]
+    end
+
+    private
+
+    def could_have_come_out_of_bag?(set, bag)
+      set.all? { |color, number_of_cubes| number_of_cubes <= bag.fetch(color, 0) }
     end
   end
 end
