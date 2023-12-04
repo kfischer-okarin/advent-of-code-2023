@@ -27,3 +27,9 @@ def test_day04_points(_args, assert)
 
   assert.equal! Day04.points(card), 8
 end
+
+def test_day04_total_cards_after_copies(_args, assert)
+  matches = [4, 2, 2, 1, 0, 0]
+
+  assert.equal! Day04.total_cards_after_copies(matches), [1, 2, 4, 8, 14, 1]
+end

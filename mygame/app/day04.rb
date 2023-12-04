@@ -1,10 +1,13 @@
 module Day04
   class << self
     def result(part)
+      cards = read_inputs(4).split("\n").map { |card_string| parse_card(card_string) }
       case part
       when 1
-        cards = read_inputs(4).split("\n").map { |card_string| parse_card(card_string) }
         cards.sum { |card| points(card) }
+      when 2
+        matching_numbers_for_every_card = cards.map { |card| number_of_matches(card) }
+        total_cards_after_copies(matching_numbers_for_every_card).sum
       end
     end
 
@@ -22,10 +25,30 @@ module Day04
     end
 
     def points(card)
-      matching_numbers = card[:own_numbers].select { |number| card[:winning_numbers][number] }
-      return 0 if matching_numbers.empty?
+      matches = number_of_matches(card)
+      return 0 if matches.zero?
 
-      2**(matching_numbers.size - 1)
+      2**(matches - 1)
+    end
+
+    def total_cards_after_copies(matching_numbers_for_every_card)
+      # In the beginning you have 1 card of each kind
+      result = matching_numbers_for_every_card.map { 1 }
+      (0...result.size).each do |card_index|
+        matches = matching_numbers_for_every_card[card_index]
+        ((card_index + 1)..(card_index + matches)).each do |copied_card_index|
+          next if copied_card_index >= result.size
+
+          result[copied_card_index] += result[card_index]
+        end
+      end
+      result
+    end
+
+    private
+
+    def number_of_matches(card)
+      card[:own_numbers].select { |number| card[:winning_numbers][number] }.size
     end
   end
 end
