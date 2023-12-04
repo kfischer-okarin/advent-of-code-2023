@@ -26,7 +26,7 @@ module Day02
         set = {}
         cube_strings.each do |cube_string|
           number_of_cubes, color = cube_string.split(' ')
-          next unless %w(blue red green).include? color
+          next unless %w[blue red green].include? color
 
           set[color.to_sym] = number_of_cubes.to_i
         end
