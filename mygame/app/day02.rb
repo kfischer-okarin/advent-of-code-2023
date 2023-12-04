@@ -8,8 +8,8 @@ module Day02
         possible_games = parsed_games.select { |game| game[:sets].all? { |set| possible_set?(set) } }
         possible_games.sum { |game| game[:id] }
       when 2
-        minimum_possible_bags_contents = parsed_games.map { |game| minimum_possible_bag_content(game[:sets]) }
-        minimum_possible_bags_contents.sum { |bag_content|
+        minimum_bags_contents = parsed_games.map { |game| minimum_necessary_bag_content(game[:sets]) }
+        minimum_bags_contents.sum { |bag_content|
           power(bag_content)
         }
       end
@@ -41,7 +41,7 @@ module Day02
       set.fetch(:red, 0) <= 12 && set.fetch(:green, 0) <= 13 && set.fetch(:blue, 0) <= 14
     end
 
-    def minimum_possible_bag_content(sets)
+    def minimum_necessary_bag_content(sets)
       result = {}
       sets.each do |set|
         set.each do |color, number_of_cubes|
