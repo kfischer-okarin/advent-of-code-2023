@@ -17,3 +17,13 @@ def test_day06_winning_charge_times(_args, assert)
 
   assert.equal! Day06.winning_charge_times(race), [2, 3, 4, 5]
 end
+
+def test_day06_parse_race(_args, assert)
+  races_string = <<~RACES
+    Time:      7  15   30
+    Distance:  9  40  200
+  RACES
+
+  expected = { time: 71_530, distance: 940_200 }
+  assert.equal! Day06.parse_race(races_string), expected
+end
