@@ -1,5 +1,5 @@
 def test_day07_parse_hand_and_bid(_args, assert)
-  assert.equal! Day07.parse_hand_and_bid('32T3K 765'), { hand: [3, 2, 10, 3, 13], bid: 765 }
+  assert.equal! Day07.parse_hand_and_bid('T55J5 765'), { hand: [10, 5, 5, 11, 5], bid: 765 }
 end
 
 def test_day07_hand_type(_args, assert)
@@ -62,4 +62,60 @@ def test_day07_total_winnings(_args, assert)
   ]
 
   assert.equal! Day07.total_winnings(hand_and_bids), 6440
+end
+
+def test_day07_parse_hand_and_bid_with_joker(_args, assert)
+  assert.equal! Day07.parse_hand_and_bid('T55J5 765', with_joker: true), { hand: [10, 5, 5, 1, 5], bid: 765 }
+end
+
+def test_day07_hand_type_with_joker(_args, assert)
+  [
+    { hand: [10, 5, 5, 1, 5], result: :four_of_a_kind },
+    { hand: [13, 10, 1, 1, 10], result: :four_of_a_kind },
+    { hand: [12, 12, 12, 1, 14], result: :four_of_a_kind }
+  ].each do |test_case|
+    assert.equal! Day07.hand_type(test_case[:hand], with_joker: true), test_case[:result]
+  end
+end
+
+def test_day07_compare_hands_with_joker(_args, assert)
+  result = Day07.compare_hands(
+    [13, 13, 6, 7, 7],
+    [13, 10, 1, 1, 10],
+    with_joker: true
+  )
+
+  assert.equal! result, -1
+end
+
+def test_day07_sort_hand_and_bids_with_joker(_args, assert)
+  hand_and_bids = [
+    { hand: [3, 2, 10, 3, 13], bid: 765 },
+    { hand: [10, 5, 5, 1, 5], bid: 684 },
+    { hand: [13, 13, 6, 7, 7], bid: 28 },
+    { hand: [13, 10, 1, 1, 10], bid: 220 },
+    { hand: [12, 12, 12, 1, 14], bid: 483 }
+  ]
+
+  expected_order = [
+    { hand: [3, 2, 10, 3, 13], bid: 765 },
+    { hand: [13, 13, 6, 7, 7], bid: 28 },
+    { hand: [10, 5, 5, 1, 5], bid: 684 },
+    { hand: [12, 12, 12, 1, 14], bid: 483 },
+    { hand: [13, 10, 1, 1, 10], bid: 220 }
+  ]
+
+  assert.equal! Day07.sort_hand_and_bids(hand_and_bids, with_joker: true), expected_order
+end
+
+def test_day07_total_winnings_with_joker(_args, assert)
+  hand_and_bids = [
+    { hand: [3, 2, 10, 3, 13], bid: 765 },
+    { hand: [10, 5, 5, 1, 5], bid: 684 },
+    { hand: [13, 13, 6, 7, 7], bid: 28 },
+    { hand: [13, 10, 1, 1, 10], bid: 220 },
+    { hand: [12, 12, 12, 1, 14], bid: 483 }
+  ]
+
+  assert.equal! Day07.total_winnings(hand_and_bids, with_joker: true), 5905
 end
