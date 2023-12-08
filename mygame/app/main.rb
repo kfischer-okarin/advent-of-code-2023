@@ -1,3 +1,4 @@
+require 'lib/math'
 require_relative 'layout'
 require_relative 'ui'
 require_relative 'menu'
