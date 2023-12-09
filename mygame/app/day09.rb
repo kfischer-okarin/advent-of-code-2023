@@ -4,8 +4,11 @@ module Day09
       sequences = read_inputs(9).split("\n").map { |line| line.split.map(&:to_i) }
       case part
       when 1
-        next_values = sequences.map { |sequence| extrapolate_from(sequence) }
+        next_values = sequences.map { |sequence| extrapolate_next_value_from(sequence) }
         next_values.sum
+      when 2
+        previous_values = sequences.map { |sequence| extrapolate_previous_value_from(sequence) }
+        previous_values.sum
       end
     end
 
@@ -22,7 +25,7 @@ module Day09
       result
     end
 
-    def extrapolate_from(sequence)
+    def extrapolate_next_value_from(sequence)
       sequences = [sequence.dup, *calc_differences(sequence)]
       last_index = sequences.size - 1
       sequences[last_index] << 0
@@ -31,6 +34,17 @@ module Day09
         previous_sequence << (previous_sequence[-1] + sequences[index][-1])
       end
       sequences[0][-1]
+    end
+
+    def extrapolate_previous_value_from(sequence)
+      sequences = [sequence.dup, *calc_differences(sequence)]
+      last_index = sequences.size - 1
+      sequences[last_index].unshift 0
+      last_index.downto(1).each do |index|
+        previous_sequence = sequences[index - 1]
+        previous_sequence.unshift (previous_sequence[0] - sequences[index][0])
+      end
+      sequences[0][0]
     end
   end
 end

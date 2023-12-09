@@ -10,6 +10,10 @@ def test_day09_calc_differences(_args, assert)
   assert.equal! Day09.calc_differences(sequence), expected_result
 end
 
-def test_day09_extrapolate_from(_args, assert)
-  assert.equal! Day09.extrapolate_from([10, 13, 16, 21, 30, 45]), 68
+def test_day09_extrapolate_next_value_from(_args, assert)
+  assert.equal! Day09.extrapolate_next_value_from([10, 13, 16, 21, 30, 45]), 68
+end
+
+def test_day09_extrapolate_previous_value_from(_args, assert)
+  assert.equal! Day09.extrapolate_previous_value_from([10, 13, 16, 21, 30, 45]), 5
 end
