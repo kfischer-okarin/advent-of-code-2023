@@ -15,18 +15,18 @@ module Day08
       }
     end
 
+    protected
+
+    def title
+      'Haunted Wasteland'
+    end
+
     def render(args)
       @initial_nodes.each_with_index do |node, index|
         args.outputs.labels << { x: 100, y: 500 - (80 * index), text: node[:node].to_s }
         args.outputs.labels << { x: 200, y: 500 - (80 * index), text: "First reached goal: #{node[:first_goal]}" }
         args.outputs.labels << { x: 200, y: 470 - (80 * index), text: "Second reached goal: #{node[:second_goal]}" }
       end
-    end
-
-    protected
-
-    def title
-      'Haunted Wasteland'
     end
   end
 end
