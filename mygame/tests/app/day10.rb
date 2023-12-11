@@ -126,7 +126,7 @@ def test_day10_parse_problem_start_position_se_bend(_args, assert)
   end
 end
 
-def test_day10_find_loop_positions(_args, assert)
+def test_day10_loop_positions(_args, assert)
   map_string = <<~MAP
     .....
     .S-7.
@@ -135,6 +135,7 @@ def test_day10_find_loop_positions(_args, assert)
     .....
   MAP
   problem = Day10.parse_problem(map_string)
+  loop = Day10.find_loop(problem[:map], problem[:start_position])
 
   expected_positions = [
     [1, 3],
@@ -146,7 +147,9 @@ def test_day10_find_loop_positions(_args, assert)
     [1, 1],
     [1, 2]
   ]
-  assert.equal! Day10.find_loop_positions(problem[:map], problem[:start_position]), expected_positions
+  assert.equal! loop.positions, expected_positions
+  assert.true! loop.include?([3, 3])
+  assert.false! loop.include?([0, 0])
 end
 
 module Day10Tests

@@ -5,10 +5,7 @@ module Day10
       map = problem[:map]
       start_position = problem[:start_position]
 
-      loop_positions = {}
-      Day10.find_loop_positions(map, start_position).each do |position|
-        loop_positions[position] = true
-      end
+      loop = Day10.find_loop(map, start_position)
 
       render_target = args.outputs[:map]
       render_target.width = map.size * 4
@@ -19,7 +16,7 @@ module Day10
           position = [x, y]
           color = if position == start_position
                     { r: 0, g: 200, b: 0 }
-                  elsif loop_positions[position]
+                  elsif loop.include? position
                     { r: 200, g: 150, b: 0 }
                   else
                     { r: 0, g: 0, b: 0 }
