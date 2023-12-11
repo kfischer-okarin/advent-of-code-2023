@@ -6,6 +6,8 @@ module Day10
       case part
       when 1
         loop.positions.size.idiv(2)
+      when 2
+        loop.enclosed_positions.size
       end
     end
 
@@ -36,15 +38,6 @@ module Day10
       PipeLoop.new(map, start_position)
     end
 
-    TILE_CONNECTIONS = {
-      '|' => %i[n s],
-      '-' => %i[e w],
-      'L' => %i[n e],
-      'J' => %i[n w],
-      '7' => %i[s w],
-      'F' => %i[e s]
-    }.freeze
-
     private
 
     def determine_tile_from_surroundings(map, position)
@@ -71,6 +64,15 @@ module Day10
     end
   end
 
+  TILE_CONNECTIONS = {
+    '|' => %i[n s],
+    '-' => %i[e w],
+    'L' => %i[n e],
+    'J' => %i[n w],
+    '7' => %i[s w],
+    'F' => %i[e s]
+  }.freeze
+
   OPPOSITE_DIRECTION = {
     n: :s,
     s: :n,
@@ -86,6 +88,8 @@ module Day10
   }.freeze
 
   class PipeLoop
+    attr_reader :map
+
     def initialize(map, start_position)
       @map = map
       @start_position = start_position
@@ -97,6 +101,14 @@ module Day10
 
     def include?(position)
       position_set.include?(position)
+    end
+
+    def bottom_left_corner
+      @bottom_left_corner ||= calc_bottom_left_corner
+    end
+
+    def enclosed_positions
+      @enclosed_positions ||= calc_enclosed_positions
     end
 
     private
@@ -118,6 +130,106 @@ module Day10
         result << position
         direction_we_came_from = OPPOSITE_DIRECTION[next_direction]
         connections = @map[position.x][position.y].reject { |direction| direction == direction_we_came_from }
+      end
+      result
+    end
+
+    def calc_bottom_left_corner
+      ne_bend_positions = positions.select { |x, y| @map[x][y] == TILE_CONNECTIONS['L'] }
+      ne_bend_positions.min_by { |x, y| x + y }
+    end
+
+    def calc_enclosed_positions
+      floodfill_grid = FloodfillGrid.build(self)
+      start_position = floodfill_grid.top_right_of(bottom_left_corner)
+      loop_area_grid_positions = floodfill_grid.flood_fill_from(start_position)
+      loop_area_map_positions = floodfill_grid.map_positions_of(loop_area_grid_positions)
+      loop_area_map_positions.reject! { |position| include? position }
+    end
+  end
+
+  class FloodfillGrid
+    def self.build(loop)
+      new(loop)
+    end
+
+    def initialize(loop)
+      @loop = loop
+    end
+
+    def cells
+      @cells ||= build_cells
+    end
+
+    def top_right_of(position)
+      [(position.x * 3) + 2, (position.y * 3) + 2]
+    end
+
+    def flood_fill_from(start)
+      result = []
+      visited = { start.x => { start.y => true } }
+      frontier = [start]
+      until frontier.empty?
+        current = frontier.shift
+        result << current
+        visited[current] = true
+        unvisited_neighbors = [[0, 1], [1, 0], [0, -1], [-1, 0]].map { |offset_x, offset_y|
+          x = current.x + offset_x
+          y = current.y + offset_y
+          next if (visited[x] || {})[y]
+
+          cell = (cells[x] || [])[y]
+          next unless cell == '.'
+
+          [x, y]
+        }.compact!
+        unvisited_neighbors.each do |x, y|
+          visited[x] ||= {}
+          visited[x][y] = true
+        end
+        frontier.concat unvisited_neighbors
+      end
+      result
+    end
+
+    def map_positions_of(grid_positions)
+      result = {}
+      grid_positions.each do |x, y|
+        result[[x.idiv(3), y.idiv(3)]] = true
+      end
+      result.keys
+    end
+
+    private
+
+    def build_cells
+      result = []
+      @loop.map.each_with_index do |column, x|
+        column.each_with_index do |connections, y|
+          grid_x = x * 3
+          grid_y = y * 3
+          3.times do |x_offset|
+            result[grid_x + x_offset] ||= []
+            3.times do |y_offset|
+              result[grid_x + x_offset][grid_y + y_offset] = '.'
+            end
+          end
+
+          cell = @loop.include?([x, y]) ? 'o' : 'x'
+          connections.each do |direction|
+            result[grid_x + 1][grid_y + 1] = cell
+            case direction
+            when :n
+              result[grid_x + 1][grid_y + 2] = cell
+            when :s
+              result[grid_x + 1][grid_y] = cell
+            when :w
+              result[grid_x][grid_y + 1] = cell
+            when :e
+              result[grid_x + 2][grid_y + 1] = cell
+            end
+          end
+        end
       end
       result
     end
