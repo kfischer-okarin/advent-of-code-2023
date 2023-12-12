@@ -82,4 +82,12 @@ def test_day11_calc_distance_sum(_args, assert)
   space.expand
 
   assert.equal! Day11.calc_distance_sum(space), 374
+
+  space = Day11.parse_space(space_string)
+  space.expand(factor: 10)
+  assert.equal! Day11.calc_distance_sum(space), 1030
+
+  space = Day11.parse_space(space_string)
+  space.expand(factor: 100)
+  assert.equal! Day11.calc_distance_sum(space), 8410
 end

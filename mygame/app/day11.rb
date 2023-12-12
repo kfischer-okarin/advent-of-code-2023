@@ -5,8 +5,10 @@ module Day11
       case part
       when 1
         space.expand
-        calc_distance_sum(space)
+      when 2
+        space.expand(factor: 1_000_000)
       end
+      calc_distance_sum(space)
     end
 
     def parse_space(space_string)
@@ -62,39 +64,41 @@ module Day11
       }
     end
 
-    def expand
-      expand_vertically
-      expand_horizontally
+    def expand(factor: 2)
+      expand_vertically(factor)
+      expand_horizontally(factor)
     end
 
     private
 
-    def expand_vertically
+    def expand_vertically(factor)
+      increment = factor - 1
       offset = 0
       rows_without_galaxies.each do |y|
         @galaxies.transform_values! do |column_galaxies|
           result = {}
           column_galaxies.each do |galaxy_y, galaxies|
-            new_y = galaxy_y > y + offset ? galaxy_y + 1 : galaxy_y
+            new_y = galaxy_y > y + offset ? galaxy_y + increment : galaxy_y
             result[new_y] = galaxies
           end
           result
         end
-        offset += 1
+        offset += increment
       end
       @height += offset
     end
 
-    def expand_horizontally
+    def expand_horizontally(factor)
+      increment = factor - 1
       offset = 0
       columns_without_galaxies.each do |x|
         result = {}
         @galaxies.each do |galaxy_x, galaxies|
-          new_x = galaxy_x > x + offset ? galaxy_x + 1 : galaxy_x
+          new_x = galaxy_x > x + offset ? galaxy_x + increment : galaxy_x
           result[new_x] = galaxies
         end
         @galaxies = result
-        offset += 1
+        offset += increment
       end
       @width += offset
     end
