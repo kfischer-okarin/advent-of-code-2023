@@ -140,6 +140,16 @@ def test_day12_possible_arrangements(_args, assert)
   end
 end
 
+def test_day12_parse_record_unfolded(_args, assert)
+  record_line = '.# 1'
+
+  expected_record = {
+    springs: %w[. # ? . # ? . # ? . # ? . #],
+    damaged_groups: [1, 1, 1, 1, 1]
+  }
+  assert.equal! Day12.parse_record_unfolded(record_line), expected_record
+end
+
 module Day12Tests
   class << self
     def examples
@@ -154,3 +164,4 @@ module Day12Tests
     end
   end
 end
+

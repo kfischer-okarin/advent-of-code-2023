@@ -7,6 +7,9 @@ module Day12
       when 1
         records = lines.map { |line| parse_record(line) }
         records.sum { |record| possible_arrangements(record) }
+      when 2
+        records = lines.map { |line| parse_record_unfolded(line) }
+        records.sum { |record| possible_arrangements(record) }
       end
     end
 
@@ -15,6 +18,14 @@ module Day12
       {
         springs: springs_part.chars,
         damaged_groups: groups_part.split(',').map(&:to_i)
+      }
+    end
+
+    def parse_record_unfolded(record_line)
+      folded_record = parse_record(record_line)
+      {
+        springs: (folded_record[:springs] + ['?']) * 4 + folded_record[:springs],
+        damaged_groups: folded_record[:damaged_groups] * 5
       }
     end
 
@@ -49,12 +60,37 @@ module Day12
     end
 
     def possible_arrangements(record)
-      next_choices = place_first_group(record)
-      return next_choices.size if record[:damaged_groups].size == 1
+      PossibleArrangementsCalculator.new(record).result
+    end
+  end
 
-      next_choices.sum { |choice|
-        possible_arrangements(choice)
-      }
+  class PossibleArrangementsCalculator
+    def initialize(initial_record)
+      @results = {}
+      @initial_record = initial_record
+    end
+
+    def result
+      possible_arrangements(@initial_record)
+    end
+
+    private
+
+    def possible_arrangements(record)
+      springs_results = @results[record[:springs]] ||= {}
+      damaged_groups = record[:damaged_groups]
+      unless springs_results.key? damaged_groups
+        next_choices = Day12.place_first_group(record)
+        springs_results[damaged_groups] = if damaged_groups.size == 1
+                                            next_choices.size
+                                          else
+                                            next_choices.sum { |choice|
+                                              possible_arrangements(choice)
+                                            }
+                                          end
+      end
+
+      springs_results[damaged_groups]
     end
   end
 end
