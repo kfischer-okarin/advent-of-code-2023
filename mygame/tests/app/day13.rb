@@ -41,6 +41,26 @@ def test_day13_pattern_summary_score(_args, assert)
   assert.equal! Day13.pattern_summary_score(pattern), 400
 end
 
+def test_day13_horizontal_reflection_index_with_smudge(_args, assert)
+  pattern = Day13.parse_pattern(Day13Tests.pattern1)
+
+  assert.nil! Day13.horizontal_reflection_index(pattern, with_smudge: true)
+
+  pattern = Day13.parse_pattern(Day13Tests.pattern2)
+
+  assert.nil! Day13.horizontal_reflection_index(pattern, with_smudge: true)
+end
+
+def test_day13_vertical_reflection_index_with_smudge(_args, assert)
+  pattern = Day13.parse_pattern(Day13Tests.pattern1)
+
+  assert.equal! Day13.vertical_reflection_index(pattern, with_smudge: true), 3
+
+  pattern = Day13.parse_pattern(Day13Tests.pattern2)
+
+  assert.equal! Day13.vertical_reflection_index(pattern, with_smudge: true), 5
+end
+
 module Day13Tests
   class << self
     def pattern1
