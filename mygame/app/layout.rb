@@ -2,6 +2,11 @@ def arrange_in_two_columns(rects)
   column = { x: 0, w: 640 }
   y = 620
   rects.each do |rect|
+    if (y - rect[:h]).negative?
+      column[:x] += 640
+      y = 620
+    end
+
     rect[:w] ||= 600
     center_horizontally(rect, in_rect: column)
     rect[:y] = y - rect[:h]
