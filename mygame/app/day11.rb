@@ -12,8 +12,7 @@ module Day11
     end
 
     def parse_space(space_string)
-      cells = space_string.split("\n").map(&:chars).reverse.transpose
-      Space.new(cells)
+      Space.new(parse_as_cells(space_string))
     end
 
     def calc_distance_sum(space)

@@ -13,7 +13,7 @@ module Day13
     end
 
     def parse_pattern(pattern_string)
-      pattern_string.split("\n").reverse.map(&:chars).transpose
+      parse_as_cells(pattern_string)
     end
 
     def horizontal_reflection_index(pattern, with_smudge: false)

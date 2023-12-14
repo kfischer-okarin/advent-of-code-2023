@@ -67,6 +67,10 @@ def read_inputs(day_number)
   $gtk.read_file('inputs/day%02d.txt' % day_number)
 end
 
+def parse_as_cells(string)
+  string.split("\n").map(&:chars).reverse.transpose
+end
+
 def headline(text)
   {
     x: 640, y: 700,
