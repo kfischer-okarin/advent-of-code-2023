@@ -1,9 +1,9 @@
 def test_day14_roll_rocks_north(_args, assert)
   row = %w[O . . O # . . . O .]
 
-  Day14.roll_rocks_north(row)
+  result = Day14.roll_rocks_north(row)
 
-  assert.equal! row, %w[. . O O # . . . . O]
+  assert.equal! result, %w[. . O O # . . . . O]
 end
 
 def test_day14_load_of_column(_args, assert)
@@ -21,7 +21,7 @@ end
 
 def test_day14_total_load(_args, assert)
   platform = Day14Tests.platform
-  Day14.tilt_north(platform)
+  platform = Day14.tilt_north(platform)
 
   assert.equal! Day14.total_load(platform), 136
 end
@@ -29,7 +29,7 @@ end
 def test_day14_tilt_north(_args, assert)
   platform = Day14Tests.platform
 
-  Day14.tilt_north(platform)
+  result = Day14.tilt_north(platform)
 
   expected_platform = [
     %w[O O O O . # . O . .],
@@ -43,7 +43,22 @@ def test_day14_tilt_north(_args, assert)
     %w[# . . . . # # # . .],
     %w[# . . . . # . . . .]
   ].reverse.transpose
-  assert.equal! platform, expected_platform
+  assert.equal! result, expected_platform
+end
+
+def test_day14_rotate_right(_args, assert)
+  values = [
+    [12, 22],
+    [11, 21]
+  ]
+
+  result = Day14.rotate_right(values)
+
+  expected_values = [
+    [11, 12],
+    [21, 22]
+  ]
+  assert.equal! result, expected_values
 end
 
 module Day14Tests
