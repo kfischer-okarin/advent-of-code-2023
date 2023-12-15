@@ -1,12 +1,16 @@
 module Day15
   class << self
     def result(part)
-      instructions_string = read_inputs(15)
+      instructions = parse_instructions(read_inputs(15))
 
       case part
       when 1
-        instruction_hash_sum(instructions_string)
+        instruction_hash_sum(instructions)
       end
+    end
+
+    def parse_instructions(instructions_string)
+      instructions_string.strip.split(',')
     end
 
     def hash_value(string)
@@ -19,8 +23,8 @@ module Day15
       result
     end
 
-    def instruction_hash_sum(instructions_string)
-      instructions_string.strip.split(',').sum { |instruction| hash_value(instruction) }
+    def instruction_hash_sum(instructions)
+      instructions.sum { |instruction| hash_value(instruction) }
     end
   end
 end
