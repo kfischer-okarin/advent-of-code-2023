@@ -33,6 +33,9 @@ require_relative 'day14'
 require_relative 'day14/screen'
 require_relative 'day15'
 require_relative 'day15/screen'
+require_relative 'day16'
+require_relative 'day16/screen'
+
 
 SCREEN = { x: 0, y: 0, w: 1280, h: 720 }.freeze
 
