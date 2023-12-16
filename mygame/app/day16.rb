@@ -7,6 +7,7 @@ module Day16
       when 1
         energized_tile_count(layout)
       when 2
+        max_energized_tile_count(layout)
       end
     end
 
@@ -49,21 +50,37 @@ module Day16
       { x: x, y: y, directions: new_directions || [] }
     end
 
-    def energized_tile_count(layout)
+    def max_energized_tile_count(layout)
+      width = layout.size
+      height = layout[0].size
+      beams = []
+      (0...width).each do |x|
+        beams << [x, -1, :up]
+        beams << [x, height, :down]
+      end
+      (0...height).each do |y|
+        beams << [-1, y, :right]
+        beams << [width, y, :left]
+      end
+      energized_tile_counts = beams.map { |beam| energized_tile_count(layout, beam) }
+      energized_tile_counts.max
+    end
+
+    def energized_tile_count(layout, initial_beam)
       tiles_energy = layout.map { |column| column.map { 0 } }
       processed_beams = {}
-      beams = [[-1, layout[0].size - 1, :right]]
+      beams = [initial_beam]
+      width = layout.size
+      height = layout[0].size
       until beams.empty?
         beam = beams.shift
         next if processed_beams.key? beam
 
         beam_end = advance_beam(beam, layout)
 
-        left, right = [beam[0], beam_end[:x]].sort
-        bottom, top = [beam[1], beam_end[:y]].sort
+        left, right = [beam[0].clamp(0, width - 1), beam_end[:x]].sort
+        bottom, top = [beam[1].clamp(0, height - 1), beam_end[:y]].sort
         (left..right).each do |x|
-          next if x == -1
-
           (bottom..top).each do |y|
             tiles_energy[x][y] = 1
           end

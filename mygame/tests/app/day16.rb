@@ -53,5 +53,7 @@ def test_day16_energized_tile_count(_args, assert)
   LAYOUT
   layout = Day16.parse_layout(layout_string)
 
-  assert.equal! Day16.energized_tile_count(layout), 46
+  assert.equal! Day16.energized_tile_count(layout, [-1, 9, :right]), 46
+  assert.equal! Day16.energized_tile_count(layout, [3, 10, :down]), 51
+  assert.equal! Day16.max_energized_tile_count(layout), 51
 end
