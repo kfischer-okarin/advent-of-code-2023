@@ -1,4 +1,6 @@
 require 'lib/math'
+require 'lib/multi_dim_hash'
+require 'lib/priority_queue'
 require_relative 'layout'
 require_relative 'ui'
 require_relative 'menu'
@@ -35,7 +37,8 @@ require_relative 'day15'
 require_relative 'day15/screen'
 require_relative 'day16'
 require_relative 'day16/screen'
-
+require_relative 'day17'
+require_relative 'day17/screen'
 
 SCREEN = { x: 0, y: 0, w: 1280, h: 720 }.freeze
 

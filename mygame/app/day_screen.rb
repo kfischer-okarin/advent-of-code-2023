@@ -36,10 +36,18 @@ class DayScreen
 
     calc_day_answer_button = state.ui.buttons[:calc_day_answer]
     calc_day_answer_button[:answer] = nil if state.part_changed
-    if calc_day_answer_button[:clicked]
-      calc_day_answer_button[:answer] = day_module.result(state.part)
-      puts "Answer for Part #{state.part} is: #{calc_day_answer_button[:answer]}"
-    end
+    on_calc_day_answer(args) if calc_day_answer_button[:clicked]
+  end
+
+  def on_calc_day_answer(args)
+    set_answer(args, day_module.result(args.state.part))
+  end
+
+  def set_answer(args, value)
+    state = args.state
+    calc_day_answer_button = state.ui.buttons[:calc_day_answer]
+    calc_day_answer_button[:answer] = value
+    puts "Answer for Part #{state.part} is: #{value}"
   end
 
   def render_common_ui(args)
