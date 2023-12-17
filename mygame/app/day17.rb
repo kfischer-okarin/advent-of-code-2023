@@ -38,14 +38,51 @@ module Day17
       result
     end
 
-    def optimal_path(map)
-      pathfinder = Pathfinder.new(map)
+    def neighbors_ultra_crucibles(state, map)
+      width = map.size
+      height = map[0].size
+      x, y, direction, steps = state
+      result = []
+      [
+        [x, y + 1, :up],
+        [x + 1, y, :right],
+        [x, y - 1, :down],
+        [x - 1, y, :left]
+      ].each do |neighbor_x, neighbor_y, next_direction|
+        next if neighbor_x.negative? || neighbor_x >= width || neighbor_y.negative? || neighbor_y >= height
+        next if opposite_direction?(direction, next_direction)
+
+        same_direction = direction == next_direction
+        next_steps = same_direction ? steps + 1 : 1
+        next if !same_direction && steps.between?(1, 3)
+        next if same_direction && steps == 10
+
+        if next_steps < 4
+          case next_direction
+          when :up
+            next if neighbor_y >= height - 1
+          when :right
+            next if neighbor_x >= width - 1
+          when :down
+            next if neighbor_y <= 0
+          when :left
+            next if neighbor_x <= 0
+          end
+        end
+
+        result << [neighbor_x, neighbor_y, next_direction, same_direction ? steps + 1 : 1]
+      end
+      result
+    end
+
+    def optimal_path(map, ultra_crucible: false)
+      pathfinder = Pathfinder.new(map, ultra_crucible: ultra_crucible)
       pathfinder.step until pathfinder.finished?
       pathfinder.optimal_path_to_current
     end
 
-    def minimal_heat_loss(map)
-      optimal_path = optimal_path(map)
+    def minimal_heat_loss(map, ultra_crucible: false)
+      optimal_path = optimal_path(map, ultra_crucible: ultra_crucible)
       optimal_path.shift # ignore first tile
       optimal_path.sum { |x, y| map[x][y] }
     end
@@ -59,7 +96,7 @@ module Day17
   end
 
   class Pathfinder
-    def initialize(map)
+    def initialize(map, ultra_crucible: false)
       @map = map
       @width = map.size
       @height = map[0].size
@@ -73,6 +110,7 @@ module Day17
       @frontier.insert start, 0
       @current = nil
       @finished = false
+      @ultra_crucible = ultra_crucible
     end
 
     def finished?
@@ -87,7 +125,7 @@ module Day17
         return
       end
 
-      Day17.neighbors(@current, @map).each do |neighbor|
+      neighbors(@current).each do |neighbor|
         cost = @map[neighbor[0]][neighbor[1]]
         total_cost = @cost_so_far[@current] + cost
         next if @cost_so_far[neighbor] && @cost_so_far[neighbor] <= total_cost
@@ -114,6 +152,14 @@ module Day17
         current = @came_from[current]
       end
       result
+    end
+
+    def neighbors(cell)
+      if @ultra_crucible
+        Day17.neighbors_ultra_crucibles(cell, @map)
+      else
+        Day17.neighbors(cell, @map)
+      end
     end
   end
 end

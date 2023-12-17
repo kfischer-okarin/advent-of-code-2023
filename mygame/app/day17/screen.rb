@@ -17,14 +17,13 @@ module Day17
         h: render_target.height,
         path: :map
       }
-      @pathfinder = Day17::Pathfinder.new(@map)
       @started = false
     end
 
     protected
 
     def update(args)
-      return if !@started || @pathfinder.finished?
+      return if !@started || @pathfinder&.finished?
 
       1000.times do
         @pathfinder.step
@@ -39,6 +38,8 @@ module Day17
 
     def render(args)
       args.outputs.sprites << @map_sprite
+      return unless @pathfinder
+
       @pathfinder.optimal_path_to_current.each do |x, y|
         args.outputs.sprites << {
           x: @map_sprite[:x] + (x * 4),
@@ -48,7 +49,8 @@ module Day17
       end
     end
 
-    def on_calc_day_answer(_args)
+    def on_calc_day_answer(args)
+      @pathfinder = Day17::Pathfinder.new(@map, ultra_crucible: args.state.part == 2)
       @started = true
     end
 
