@@ -167,25 +167,23 @@ module Day10
 
     def flood_fill_from(start)
       result = []
-      visited = { start.x => { start.y => true } }
+      visited = MultiDimHash.new(start => true)
       frontier = [start]
       until frontier.empty?
         current = frontier.shift
         result << current
-        visited[current] = true
         unvisited_neighbors = [[0, 1], [1, 0], [0, -1], [-1, 0]].map { |offset_x, offset_y|
           x = current.x + offset_x
           y = current.y + offset_y
-          next if (visited[x] || {})[y]
+          next if visited[[x, y]]
 
           cell = (cells[x] || [])[y]
           next unless cell == '.'
 
           [x, y]
         }.compact!
-        unvisited_neighbors.each do |x, y|
-          visited[x] ||= {}
-          visited[x][y] = true
+        unvisited_neighbors.each do |neighbor|
+          visited[neighbor] = true
         end
         frontier.concat unvisited_neighbors
       end
